@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+
+<html>
+
+<body>
+    <canvas id="cvs" width="757" height="1355" onclick="update(event)">
+        Your browser does not support the HTML5 canvas tag.
+    </canvas>
+
+    <h2 id="output">Kilter Board Climb Lookup</h2>
+	
+	<button onclick="reset()">Reset</button>
+    <button onclick="submit()">Submit</button>
+
+    <p id="debug">click...</p>
+
+    <script>
+		//make grid more accurate
+        
+
+        var hand_location = []
+        var foot_location = []
+        var start_location = []
+        var finish_location = []
+	
+        // loads canvas and its drawing "context"
+        var c = document.getElementById("cvs");
+        var ctx = c.getContext("2d");
+
+		var blue = new Image();
+        blue.src = "blue.png";
+		var orange = new Image();
+        orange.src = "orange.png";
+		var green = new Image();
+        green.src = "green.png";
+		var purple = new Image();
+        purple.src = "purple.png";
+
+        // loads image, waiting for load to complete before displaying
+        var img = new Image();
+        img.src = "routeset_menu.png";
+        img.addEventListener('load', function () {
+            ctx.drawImage(img, 0, 0, 757, 1355);
+            ctx.stroke();
+        }, false);
+
+        // manually coded data array containing centers of all click targets
+		var targets = [[  55,  113],       [ 119,  113],       [ 183,  113],       [ 246,  113],       [ 310,  113],       [ 375,  113],       [ 440,  113],       [ 503,  113],       [ 568,  113],       [ 632,  113],       [ 697,  113],       [  55,  178],       [ 119,  178],       [ 183,  178],       [ 246,  178],       [ 310,  178],       [ 375,  178],       [ 440,  178],       [ 503,  178],       [ 568,  178],       [ 632,  178],       [ 697,  178],       [  55,  242],       [ 119,  242],       [ 183,  242],       [ 246,  242],       [ 310,  242],       [ 375,  242],       [ 440,  242],       [ 503,  242],       [ 568,  242],       [ 632,  242],       [ 697,  242],       [  88,  275],       [ 217,  275],       [ 344,  275],       [ 473,  275],       [ 597,  275],       [ 729,  275],       [  55,  304],       [ 119,  304],       [ 183,  304],       [ 246,  304],       [ 310,  304],       [ 375,  304],       [ 440,  304],       [ 503,  304],       [ 568,  304],       [ 632,  304],       [ 697,  304],       [  25,  338],       [ 157,  338],       [ 281,  338],       [ 411,  338],       [ 539,  338],       [ 665,  338],       [  55,  369],       [ 119,  369],       [ 183,  369],       [ 246,  369],       [ 310,  369],       [ 375,  369],       [ 440,  369],       [ 503,  369],       [ 568,  369],       [ 632,  369],       [ 697,  369],       [  88,  405],       [ 217,  405],       [ 344,  405],       [ 473,  405],       [ 597,  405],       [ 729,  405],       [  55,  431],       [ 119,  431],       [ 183,  431],       [ 246,  431],       [ 310,  431],       [ 375,  431],       [ 440,  431],       [ 503,  431],       [ 568,  431],       [ 632,  431],       [ 697,  431],       [  25,  464],       [ 157,  464],       [ 281,  464],       [ 411,  464],       [ 539,  464],       [ 665,  464],       [  55,  495],       [ 119,  495],       [ 183,  495],       [ 246,  495],       [ 310,  495],       [ 375,  495],       [ 440,  495],       [ 503,  495],       [ 568,  495],       [ 632,  495],       [ 697,  495],       [  88,  530],       [ 217,  530],       [ 344,  530],       [ 473,  530],       [ 597,  530],       [ 729,  530],       [  55,  560],       [ 119,  560],       [ 183,  560],       [ 246,  560],       [ 310,  560],       [ 375,  560],       [ 440,  560],       [ 503,  560],       [ 568,  560],       [ 632,  560],       [ 697,  560],       [  25,  595],       [ 157,  595],       [ 281,  595],       [ 411,  595],       [ 539,  595],       [ 665,  595],       [  55,  625],       [ 119,  625],       [ 183,  625],       [ 246,  625],       [ 310,  625],       [ 375,  625],       [ 440,  625],       [ 503,  625],       [ 568,  625],       [ 632,  625],       [ 697,  625],       [  88,  656],       [ 217,  656],       [ 344,  656],       [ 473,  656],       [ 597,  656],       [ 729,  656],       [  55,  689],       [ 119,  689],       [ 183,  689],       [ 246,  689],       [ 310,  689],       [ 375,  689],       [ 440,  689],       [ 503,  689],       [ 568,  689],       [ 632,  689],       [ 697,  689],       [  25,  723],       [ 157,  723],       [ 281,  723],       [ 411,  723],       [ 539,  723],       [ 665,  723],       [  55,  753],       [ 119,  753],       [ 183,  753],       [ 246,  753],       [ 310,  753],       [ 375,  753],       [ 440,  753],       [ 503,  753],       [ 568,  753],       [ 632,  753],       [ 697,  753],       [  88,  784],       [ 217,  784],       [ 344,  784],       [ 473,  784],       [ 597,  784],       [ 729,  784],       [  55,  817],       [ 119,  817],       [ 183,  817],       [ 246,  817],       [ 310,  817],       [ 375,  817],       [ 440,  817],       [ 503,  817],       [ 568,  817],       [ 632,  817],       [ 697,  817],       [  25,  847],       [ 157,  847],       [ 281,  847],       [ 411,  847],       [ 539,  847],       [ 665,  847],       [  55,  880],       [ 119,  880],       [ 183,  880],       [ 246,  880],       [ 310,  880],       [ 375,  880],       [ 440,  880],       [ 503,  880],       [ 568,  880],       [ 632,  880],       [ 697,  880],       [  88,  917],       [ 217,  917],       [ 344,  917],       [ 473,  917],       [ 597,  917],       [ 729,  917],       [  55,  945],       [ 119,  945],       [ 183,  945],       [ 246,  945],       [ 310,  945],       [ 375,  945],       [ 440,  945],       [ 503,  945],       [ 568,  945],       [ 632,  945],       [ 697,  945],       [  25,  976],       [ 157,  976],       [ 281,  976],       [ 411,  976],       [ 539,  976],       [ 665,  976],       [  55, 1008],       [ 119, 1008],       [ 183, 1008],       [ 246, 1008],       [ 310, 1008],       [ 375, 1008],       [ 440, 1008],       [ 503, 1008],       [ 568, 1008],       [ 632, 1008],       [ 697, 1008],       [  88, 1047],       [ 217, 1047],       [ 344, 1047],       [ 473, 1047],       [ 597, 1047],       [ 729, 1047],       [  55, 1076],       [ 119, 1076],       [ 183, 1076],       [ 246, 1076],       [ 310, 1076],       [ 375, 1076],       [ 440, 1076],       [ 503, 1076],       [ 568, 1076],       [ 632, 1076],       [ 697, 1076],       [  25, 1106],       [ 157, 1106],       [ 281, 1106],       [ 411, 1106],       [ 539, 1106],       [ 665, 1106],       [  55, 1138],       [ 119, 1138],       [ 183, 1138],       [ 246, 1138],       [ 310, 1138],       [ 375, 1138],       [ 440, 1138],       [ 503, 1138],       [ 568, 1138],       [ 632, 1138],       [ 697, 1138],       [  88, 1171],       [ 217, 1171],       [ 344, 1171],       [ 473, 1171],       [ 597, 1171],       [ 729, 1171],       [  55, 1203],       [ 119, 1203],       [ 183, 1203],       [ 246, 1203],       [ 310, 1203],       [ 375, 1203],       [ 440, 1203],       [ 503, 1203],       [ 568, 1203],       [ 632, 1203],       [ 697, 1203],       [  55, 1267],       [ 119, 1267],       [ 183, 1267],       [ 246, 1267],       [ 310, 1267],       [ 375, 1267],       [ 440, 1267],       [ 503, 1267],       [ 568, 1267],       [ 632, 1267],       [ 697, 1267],       [  25, 1300],       [  88, 1300],       [ 149, 1300],       [ 215, 1300],       [ 276, 1300],       [ 341, 1300],       [ 405, 1300],       [ 470, 1300],       [ 534, 1300],       [ 599, 1300],       [ 663, 1300],       [ 727, 1300]];
+        // array to store number of clicks on each target . . . 
+        var values = Array(targets.length).fill(0);
+        // . . . and the colors matching each number of clicks
+		var colors = ["transparent", "green", "blue", "orange", "purple"];
+
+        // event handler - called whever canvas is clicked
+        function update(event) {
+            // get canvas upper left corner and then x,y of click relative to image
+            var imgBox = event.target.getBoundingClientRect();
+            var clickX = event.clientX - imgBox.left;
+            var clickY = event.clientY - imgBox.top;
+
+            // My variables
+            var hand_length = hand_location.length;
+            var foot_length = foot_location.length;
+            var start_length = start_location.length;
+            var finish_length = finish_location.length;
+            var total_length = hand_length + foot_length + start_length + finish_length;
+
+            // Clicking on blue menu bar
+            if (clickY < 69) return;
+
+            // debug coordinates by uncommenting here:
+            //var msg = "X coords: " + clickX + ", Y coords: " + clickY;
+            //document.getElementById("debug").innerHTML = msg;
+
+            // find target that is closest to the click
+            var minDist = Number.MAX_VALUE;
+            var minIndex = 0;
+            for (var i = 0; i < targets.length; i++) {
+                deltaX = clickX - targets[i][0];
+                deltaY = clickY - targets[i][1];
+                // distance formula without square root (just adds work)
+                dist2 = deltaX * deltaX + deltaY * deltaY;
+                if (dist2 < minDist) {
+                    minIndex = i;
+                    minDist = dist2;
+                }
+            }
+            
+            var clicked_button = values[minIndex];
+
+            // Converted Python Code - Logic for changing hold values
+            if (clicked_button == 0) {
+                if (total_length >= 35) {
+                    console.log("Hold Limit reached");
+                    return
+                } else {
+                    values[minIndex] = 2;
+                    hand_location.push(minIndex);
+                }
+            } else if (clicked_button == 2) {
+                    hand_location.splice(hand_location.indexOf(minIndex),1);
+                    values[minIndex] = 3;
+                    foot_location.push(minIndex);
+            } else if (clicked_button == 3) {
+                foot_location.splice(foot_location.indexOf(minIndex),1);
+
+                if (start_length >= 2) {
+                    if (finish_length >= 2) {
+                    values[minIndex] = 0;
+                    } else {
+                    values[minIndex] = 4;
+                    finish_location.push(minIndex);
+                    }
+                } else {
+                    values[minIndex] = 1;
+                    start_location.push(minIndex);
+                }
+            } else if (clicked_button == 1) {
+                start_location.splice(start_location.indexOf(minIndex),1)
+
+                if (finish_length >= 2) {
+                values[minIndex] = 0;
+                } else {
+                values[minIndex] = 4;
+                finish_location.push(minIndex);
+                }
+            } else if (clicked_button == 4) {
+                    finish_location.splice(finish_location.indexOf(minIndex),1)
+                    values[minIndex] = 0;
+            }
+            
+            // Draw Image
+			ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+			ctx.drawImage(img, 0, 0, 757, 1355);
+            drawBoxes();
+        }
+
+        // draws the corresponding template image on each target point
+        function drawBoxes() {
+            radius = 30;
+            for (var i = 0; i < targets.length; i++) {
+                ctx.beginPath();
+                x = targets[i][0];
+                y = targets[i][1];
+				color = colors[values[i]]
+                
+				if (color == "blue") ctx.drawImage(blue, x-30,y-22, blue.width,blue.height);
+				else if (color == "orange") ctx.drawImage(orange, x-40, y-22, orange.width,orange.height);
+				else if (color == "green") ctx.drawImage(green, x-30, y-22, green.width,green.height);
+				else if (color == "purple") ctx.drawImage(purple, x-30, y-22, purple.width,purple.height);
+
+
+                ctx.stroke();
+            }
+        }
+		
+		//Clears the canvas and resets everything
+		function reset() {
+			ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+			ctx.drawImage(img, 0, 0, 757, 1355);
+			values = Array(targets.length).fill(0);
+			
+        }
+        function submit() {
+            // form the HTTP GET query
+            // (may need to convert values array to a suitable string)
+            var url = "https://www.example.com/folder/?data=" + values.join("");
+            window.location = url;
+        }
+		
+    </script>
+
+</body>
+
+</html>
